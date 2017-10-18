@@ -127,14 +127,47 @@ def test_naive_bayes(input_pos, input_neg, test_doc, smoothing_factor):
     return output
 
 
+# Create gold_std of all reviews
+
+def get_gold_std(train_pos, train_neg):
+    gold_set = {}
+    test = open(train_pos, 'r', encoding="utf8")
+    for line in test.readlines():
+        gold_set[line.split(None, 1)[0]] = 'POS'
+    test = open(train_neg, 'r', encoding="utf8")
+    for line in test.readlines():
+        gold_set[line.split(None, 1)[0]] = 'NEG'
+    return gold_set
+
+
+# Give the accuracy
+
+def give_accuracy(train_pos, train_neg, test_output):
+    gold_set = get_gold_std(train_pos, train_neg)
+    count = 0
+    for elem in test_output:
+        if test_output[elem] == gold_set[elem]:
+            count = count + 1
+    return count / len(test_output)
+
+
 if __name__ == "__main__":
 
-    training_pos = r'hotelPosT-train.txt'
-    training_neg = r'hotelNegT-train.txt'
+    training_pos = r'positive.txt'
+    training_neg = r'negative.txt'
+    gold_pos = r'hotelPosT-train.txt'
+    gold_neg = r'hotelNegT-train.txt'
     dev_set = r'test_doc.txt'
     verdict = test_naive_bayes(training_pos, training_neg, dev_set, 1)
+    accuracy = give_accuracy(gold_pos, gold_neg, verdict)
     print(verdict)
+    print(accuracy)
 
     #   training_pos = sys.argv[1]  # r'hotelNegT-train.txt' #
     #   training_neg = sys.argv[2]  # r'hotelPosT-train.txt'  #
+
+
+
+
+
 
