@@ -109,17 +109,17 @@ def test_naive_bayes(input_pos, input_neg, test_doc, smoothing_factor):
     log_prior = log_prior_probability(input_pos, input_neg)
     vocab_training = get_vocab_training(input_pos, input_neg)
     log_likelihood = train_naive_bayes(input_pos, input_neg, smoothing_factor)
-    log_class = dict(log_prior)
     output = {}
     test = open(test_doc, 'r', encoding="utf8")
     for line in test.readlines():
         if line != '\n':
+            log_class = dict(log_prior)
             tokens = nltk.wordpunct_tokenize(line)
             words = [w.lower() for w in tokens]
             for word in words:
                 if word in vocab_training:
-                    log_class['input_pos'] = log_prior['input_pos'] + float(log_likelihood[word][0])
-                    log_class['input_neg'] = log_prior['input_neg'] + float(log_likelihood[word][-1])
+                    log_class['input_pos'] = log_class['input_pos'] + float(log_likelihood[word][0])
+                    log_class['input_neg'] = log_class['input_neg'] + float(log_likelihood[word][-1])
             if log_class['input_pos'] > log_class['input_neg']:
                 output[line.split(None, 1)[0]] = 'POS'
             else:
