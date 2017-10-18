@@ -70,7 +70,7 @@ def big_doc_c(input_document):
 def clean_vocab(vocab):
     clean_vocabulary = []
     for word in vocab:
-        if re.match("^[A-z]+$", word):
+        if re.match("^[a-zA-Z]+$", word):
             clean_vocabulary.append(word)
     return clean_vocabulary
 
