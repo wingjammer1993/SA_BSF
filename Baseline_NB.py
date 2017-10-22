@@ -3,6 +3,7 @@ import sys
 import math
 import nltk
 import io
+import collections
 
 
 # Gives the number of reviews in the input document
@@ -122,9 +123,9 @@ def test_naive_bayes(input_pos, input_neg, test_doc, smoothing_factor):
                     log_class['input_pos'] = log_class['input_pos'] + float(log_likelihood[word][0])
                     log_class['input_neg'] = log_class['input_neg'] + float(log_likelihood[word][-1])
             if log_class['input_pos'] > log_class['input_neg']:
-                output[line.split(None, 1)[0]] = 'POS'
+                output[str(line.split(None, 1)[0])] = 'POS'
             else:
-                output[line.split(None, 1)[0]] = 'NEG'
+                output[str(line.split(None, 1)[0])] = 'NEG'
     return output
 
 
@@ -134,10 +135,10 @@ def get_gold_std(train_pos, train_neg):
     gold_set = {}
     test = io.open(train_pos, 'r', encoding="utf8")
     for line in test.readlines():
-        gold_set[line.split(None, 1)[0]] = 'POS'
+        gold_set[str(line.split(None, 1)[0])] = 'POS'
     test = io.open(train_neg, 'r', encoding="utf8")
     for line in test.readlines():
-        gold_set[line.split(None, 1)[0]] = 'NEG'
+        gold_set[str(line.split(None, 1)[0])] = 'NEG'
     return gold_set
 
 
@@ -152,6 +153,18 @@ def give_accuracy(train_pos, train_neg, test_output):
     return count / float(len(test_output))
 
 
+def print_output(output_dict, out_file, devset):
+    op = open(out_file, 'w')
+    ip = io.open(devset, 'r')
+    for line in ip.readlines():
+        op_key = str(line.split(None, 1)[0])
+        if op_key in output_dict:
+            printable = str(op_key) + '\t' + str(output_dict[op_key]) + '\n'
+            op.write(printable)
+
+
+
+
 if __name__ == "__main__":
 
     training_pos = r'positive.txt'
@@ -161,6 +174,8 @@ if __name__ == "__main__":
     dev_set = r'test_doc.txt'
     verdict = test_naive_bayes(training_pos, training_neg, dev_set, 1)
     accuracy = give_accuracy(gold_pos, gold_neg, verdict)
+    output_file = 'output_NB.txt'
+    print_output(verdict, output_file, dev_set )
     print(verdict)
     print(accuracy)
 
